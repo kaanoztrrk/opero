@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/company_model.dart';
 
 abstract class CompanyEvent extends Equatable {
   const CompanyEvent();
@@ -8,49 +7,39 @@ abstract class CompanyEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Şirket oluşturma
 class CreateCompany extends CompanyEvent {
-  final CompanyModel company;
+  final String name;
+  final String ownerId;
 
-  const CreateCompany(this.company);
-
-  @override
-  List<Object?> get props => [company];
-}
-
-class UpdateCompany extends CompanyEvent {
-  final CompanyModel company;
-
-  const UpdateCompany(this.company);
+  const CreateCompany({required this.name, required this.ownerId});
 
   @override
-  List<Object?> get props => [company];
+  List<Object?> get props => [name, ownerId];
 }
 
-class DeleteCompany extends CompanyEvent {
-  final String companyId;
-
-  const DeleteCompany(this.companyId);
-
-  @override
-  List<Object?> get props => [companyId];
-}
-
-class AddMember extends CompanyEvent {
-  final String companyId;
+/// Kullanıcının şirket listesi
+class GetUserCompanies extends CompanyEvent {
   final String userId;
 
-  const AddMember(this.companyId, this.userId);
+  const GetUserCompanies({required this.userId});
 
   @override
-  List<Object?> get props => [companyId, userId];
+  List<Object?> get props => [userId];
 }
 
-class RemoveMember extends CompanyEvent {
-  final String companyId;
+/// Şirkete katılma
+class JoinCompany extends CompanyEvent {
   final String userId;
+  final String companyId;
+  final String invitedBy;
 
-  const RemoveMember(this.companyId, this.userId);
+  const JoinCompany({
+    required this.userId,
+    required this.companyId,
+    required this.invitedBy,
+  });
 
   @override
-  List<Object?> get props => [companyId, userId];
+  List<Object?> get props => [userId, companyId, invitedBy];
 }

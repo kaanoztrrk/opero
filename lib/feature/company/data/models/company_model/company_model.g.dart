@@ -7,26 +7,30 @@ part of 'company_model.dart';
 // **************************************************************************
 
 CompanyModel _$CompanyModelFromJson(Map<String, dynamic> json) => CompanyModel(
-  id: json['id'] as String,
+  companyId: json['companyId'] as String,
   name: json['name'] as String,
-  ownerId: json['ownerId'] as String,
-  description: json['description'] as String?,
-  members: (json['members'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
-  createdAt: DateTime.parse(json['createdAt'] as String),
+  createdBy: json['createdBy'] as String,
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
   updatedAt: json['updatedAt'] == null
       ? null
       : DateTime.parse(json['updatedAt'] as String),
+  logoUrl: json['logoUrl'] as String?,
+  modules: (json['modules'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  settings: json['settings'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$CompanyModelToJson(CompanyModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'companyId': instance.companyId,
       'name': instance.name,
-      'description': instance.description,
-      'ownerId': instance.ownerId,
-      'members': instance.members,
+      'createdBy': instance.createdBy,
       'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+      'logoUrl': instance.logoUrl,
+      'modules': instance.modules,
+      'settings': instance.settings,
     };

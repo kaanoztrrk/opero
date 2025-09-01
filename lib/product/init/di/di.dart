@@ -20,6 +20,10 @@ Future<void> setupLocator() async {
     () => FirebaseFirestore.instance,
   );
 
+  getIt.registerLazySingleton<CompanyRepository>(
+    () => CompanyRepository(firestore: getIt<FirebaseFirestore>()),
+  );
+
   // UserRepository
   getIt.registerLazySingleton<UserRepository>(
     () => UserRepository(

@@ -10,10 +10,8 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     : _repository = repository,
       super(const CompanyState()) {
     on<CreateCompany>(_onCreateCompany);
-    on<UpdateCompany>(_onUpdateCompany);
-    on<DeleteCompany>(_onDeleteCompany);
-    on<AddMember>(_onAddMember);
-    on<RemoveMember>(_onRemoveMember);
+    on<JoinCompany>(_onJoinCompany);
+    on<GetUserCompanies>(_onGetUserCompanies);
   }
 
   Future<void> _onCreateCompany(
@@ -22,8 +20,16 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
   ) async {
     emit(state.copyWith(status: CompanyStatus.loading));
     try {
-      await _repository.createCompany(event.company);
-      emit(state.copyWith(status: CompanyStatus.success));
+      final company = await _repository.createCompany(
+        name: event.name,
+        ownerId: event.ownerId,
+      );
+      emit(
+        state.copyWith(
+          status: CompanyStatus.success,
+          companies: [...state.companies, company],
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -34,14 +40,25 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     }
   }
 
-  Future<void> _onUpdateCompany(
-    UpdateCompany event,
+  Future<void> _onJoinCompany(
+    JoinCompany event,
     Emitter<CompanyState> emit,
   ) async {
     emit(state.copyWith(status: CompanyStatus.loading));
     try {
-      await _repository.updateCompany(event.company);
-      emit(state.copyWith(status: CompanyStatus.success));
+      await _repository.joinCompany(
+        userId: event.userId,
+        companyId: event.companyId,
+        invitedBy: event.invitedBy,
+      );
+
+      final updatedCompanies = await _repository.getUserCompanies(event.userId);
+      emit(
+        state.copyWith(
+          status: CompanyStatus.success,
+          companies: updatedCompanies,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -52,47 +69,14 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     }
   }
 
-  Future<void> _onDeleteCompany(
-    DeleteCompany event,
+  Future<void> _onGetUserCompanies(
+    GetUserCompanies event,
     Emitter<CompanyState> emit,
   ) async {
     emit(state.copyWith(status: CompanyStatus.loading));
     try {
-      await _repository.deleteCompany(event.companyId);
-      emit(state.copyWith(status: CompanyStatus.success));
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: CompanyStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onAddMember(AddMember event, Emitter<CompanyState> emit) async {
-    emit(state.copyWith(status: CompanyStatus.loading));
-    try {
-      await _repository.addMember(event.companyId, event.userId);
-      emit(state.copyWith(status: CompanyStatus.success));
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: CompanyStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onRemoveMember(
-    RemoveMember event,
-    Emitter<CompanyState> emit,
-  ) async {
-    emit(state.copyWith(status: CompanyStatus.loading));
-    try {
-      await _repository.removeMember(event.companyId, event.userId);
-      emit(state.copyWith(status: CompanyStatus.success));
+      final companies = await _repository.getUserCompanies(event.userId);
+      emit(state.copyWith(status: CompanyStatus.success, companies: companies));
     } catch (e) {
       emit(
         state.copyWith(

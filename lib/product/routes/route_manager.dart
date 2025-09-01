@@ -8,6 +8,7 @@ import 'package:opero/feature/auth/cubits/onboarding/onboarding_cubit.dart';
 import 'package:opero/feature/auth/presentation/forgot_password/forgot_password_view.dart';
 import 'package:opero/feature/auth/presentation/onboarding/onboarding_view.dart';
 import 'package:opero/feature/auth/presentation/sign_in/sign_in_view.dart';
+import 'package:opero/feature/company/blocs/bloc/company_bloc.dart';
 import 'package:opero/feature/company/presentation/create_company/create_company_view.dart';
 import 'package:opero/feature/home/presentation/main_view/main_view.dart';
 import 'package:opero/product/init/di/di.dart';
@@ -69,13 +70,25 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.selectCompanyView,
       builder: (BuildContext context, GoRouterState state) {
-        return SelectCompanyView();
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: getIt<AuthenticationBloc>()),
+            BlocProvider.value(value: getIt<CompanyBloc>()),
+          ],
+          child: SelectCompanyView(),
+        );
       },
     ),
     GoRoute(
       path: AppRoutes.createCompanyView,
       builder: (BuildContext context, GoRouterState state) {
-        return CreateCompanyView();
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: getIt<AuthenticationBloc>()),
+            BlocProvider.value(value: getIt<CompanyBloc>()),
+          ],
+          child: CreateCompanyView(),
+        );
       },
     ),
     GoRoute(

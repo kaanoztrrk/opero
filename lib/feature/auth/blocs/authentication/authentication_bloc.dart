@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../data/models/user_model/user_model.dart';
 import '../../data/repository/user_repository.dart';
 import 'authentication_event.dart';
 import 'authentication_state.dart';
@@ -28,9 +30,37 @@ class AuthenticationBloc
   void _onAuthenticationUserChanged(
     AuthenticationUserChanged event,
     Emitter<AuthenticationState> emit,
-  ) {
+  ) async {
     if (event.user != null) {
-      emit(AuthenticationState.authenticated(event.user!));
+      final box = Hive.box<UserModel>('userBox');
+      UserModel? localUser;
+
+      if (box.isNotEmpty) {
+        // Hive'dan çek
+        localUser = box.getAt(0);
+      } else {
+        try {
+          // Firebase Firestore'dan çek
+          final doc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(event.user!.uid)
+              .get();
+
+          if (doc.exists && doc.data() != null) {
+            // Firestore verisini UserModel'a parse et
+            localUser = UserModel.fromJson(doc.data()!);
+
+            // Hive'a kaydet
+            await box.add(localUser);
+          }
+        } catch (e) {
+          print('Firebase user fetch error: $e');
+        }
+      }
+
+      emit(
+        AuthenticationState.authenticated(event.user!, localUser: localUser),
+      );
     } else {
       emit(const AuthenticationState.unauthenticated());
     }

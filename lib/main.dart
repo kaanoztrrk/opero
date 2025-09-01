@@ -1,21 +1,25 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:opero/firebase_options.dart';
 import 'package:opero/product/init/di/di.dart';
 import 'package:opero/product/theme/theme.dart';
 
+import 'product/constant/error_page.dart';
+import 'product/init/app_initialization/app_initialization.dart';
 import 'product/routes/route_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase başlat
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  /// Error ekranını özelleştirme
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return ErrorScreen(message: details.exceptionAsString());
+  };
 
-  // DI setup
+  await AppInitialization.init();
+
   await setupLocator();
 
-  // Uygulamayı çalıştır
   runApp(const OperoApp());
 }
 
@@ -24,17 +28,8 @@ class OperoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        // Tek theme fonksiyonu ile light/dark otomatik seçimi
-        final theme = AppTheme.theme(context);
+    final theme = AppTheme.theme(context);
 
-        return MaterialApp.router(
-          routerConfig: router,
-          theme: theme,
-          // themeMode artık gerekli değil, theme() içinde context'e göre yönetiliyor
-        );
-      },
-    );
+    return MaterialApp.router(routerConfig: router, theme: theme);
   }
 }

@@ -11,10 +11,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   email: json['email'] as String,
   name: json['name'] as String,
   photoUrl: json['photoUrl'] as String?,
-  role: json['role'] as String?,
-  companyId: json['companyId'] as String?,
-  companyRole: json['companyRole'] as String?,
-  hasCompany: json['hasCompany'] as bool? ?? false,
+  role: json['role'] as String? ?? "user",
   isActive: json['isActive'] as bool? ?? true,
   lastLogin: json['lastLogin'] == null
       ? null
@@ -25,15 +22,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   updatedAt: json['updatedAt'] == null
       ? null
       : DateTime.parse(json['updatedAt'] as String),
-  settings: (json['settings'] as Map<String, dynamic>?)?.map(
-    (k, e) => MapEntry(k, e as bool),
-  ),
-  modules: (json['modules'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
   phoneNumber: json['phoneNumber'] as String?,
-  invitedBy: json['invitedBy'] as String?,
-  isSuperAdmin: json['isSuperAdmin'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -42,16 +31,9 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'name': instance.name,
   'photoUrl': instance.photoUrl,
   'role': instance.role,
-  'companyId': instance.companyId,
-  'companyRole': instance.companyRole,
-  'hasCompany': instance.hasCompany,
   'isActive': instance.isActive,
   'lastLogin': instance.lastLogin?.toIso8601String(),
-  'createdAt': instance.createdAt?.toIso8601String(),
-  'updatedAt': instance.updatedAt?.toIso8601String(),
-  'settings': instance.settings,
-  'modules': instance.modules,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': instance.updatedAt.toIso8601String(),
   'phoneNumber': instance.phoneNumber,
-  'invitedBy': instance.invitedBy,
-  'isSuperAdmin': instance.isSuperAdmin,
 };

@@ -6,7 +6,6 @@ class UserRepository {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
 
-  // instance’lar dışarıdan zorunlu olarak geliyor
   UserRepository({
     required FirebaseAuth firebaseAuth,
     required FirebaseFirestore firestore,
@@ -16,22 +15,12 @@ class UserRepository {
   /// Auth state değişimlerini dinler
   Stream<User?> get user => _firebaseAuth.authStateChanges();
 
-  /// Kullanıcı silme
-  Future<void> deleteUser() async {
-    final user = _firebaseAuth.currentUser;
-    if (user != null) {
-      await user.delete();
-    }
-  }
-
-  /// Kullanıcı oluşturma ve Firestore kaydı
+  /// Kullanıcı oluşturma (sadece User tablosuna kayıt)
   Future<UserModel> signUp({
     required String name,
     required String email,
     required String password,
-    String? invitedBy,
-    String? companyId,
-    String? companyRole,
+    String? phoneNumber,
   }) async {
     final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
@@ -47,12 +36,9 @@ class UserRepository {
       uid: firebaseUser.uid,
       email: email,
       name: name,
+      phoneNumber: phoneNumber,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      invitedBy: invitedBy,
-      companyId: companyId,
-      companyRole: companyRole,
-      hasCompany: companyId != null,
     );
 
     await _firestore
@@ -61,6 +47,15 @@ class UserRepository {
         .set(userModel.toJson());
 
     return userModel;
+  }
+
+  /// Kullanıcı silme
+  Future<void> deleteUser() async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null) {
+      await _firestore.collection('users').doc(user.uid).delete();
+      await user.delete();
+    }
   }
 
   /// Kullanıcıyı Firestore'dan al
