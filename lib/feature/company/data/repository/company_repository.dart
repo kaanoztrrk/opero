@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:opero/product/utility/helpers.dart';
 import 'package:uuid/uuid.dart';
 import '../models/company_model/company_model.dart';
 import '../models/membership/membership_model.dart';
@@ -13,11 +14,14 @@ class CompanyRepository {
     required String name,
     required String ownerId,
   }) async {
-    final companyId = Uuid().v4();
+    final companyId = const Uuid().v4();
+    final inviteCode = AppHelpers().generateInviteCode(8);
+
     final company = CompanyModel(
       companyId: companyId,
       name: name,
       createdBy: ownerId,
+      inviteCode: inviteCode, // ✅ yeni alan
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -96,5 +100,15 @@ class CompanyRepository {
     }
 
     return companies;
+  }
+
+  Future<CompanyModel> getCompanyById(String companyId) async {
+    final doc = await _firestore.collection('companies').doc(companyId).get();
+
+    if (!doc.exists) {
+      throw Exception("Company not found");
+    }
+
+    return CompanyModel.fromJson(doc.data()!);
   }
 }

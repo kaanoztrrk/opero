@@ -5,6 +5,7 @@ import 'package:opero/feature/auth/cubits/forgot_password/forgot_password.dart';
 import 'package:opero/feature/auth/cubits/onboarding/onboarding_cubit.dart';
 import 'package:opero/feature/company/blocs/bloc/company_bloc.dart';
 import 'package:opero/feature/company/data/repository/company_repository.dart';
+import 'package:opero/feature/home/cubits/main/main_cube.dart';
 import '../../../feature/auth/blocs/authentication/authentication_bloc.dart';
 import '../../../feature/auth/blocs/sign_in/sign_in_bloc.dart';
 import '../../../feature/auth/blocs/sign_up/sign_up_bloc.dart';
@@ -56,4 +57,5 @@ Future<void> setupLocator() async {
   getIt.registerFactory<SplashCubit>(() => SplashCubit());
   getIt.registerFactory<OnboardingCubit>(() => OnboardingCubit());
   getIt.registerFactory<ForgotPasswordCubit>(() => ForgotPasswordCubit());
+  getIt.registerFactory<MainCubit>(() => MainCubit());
 }

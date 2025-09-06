@@ -43,3 +43,18 @@ class JoinCompany extends CompanyEvent {
   @override
   List<Object?> get props => [userId, companyId, invitedBy];
 }
+
+class RefreshCompanies extends CompanyEvent {
+  final String userId;
+
+  const RefreshCompanies(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}
+
+class GetCompanyById extends CompanyEvent {
+  final String companyId;
+
+  GetCompanyById(this.companyId);
+}

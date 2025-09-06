@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opero/feature/auth/blocs/authentication/authentication_bloc.dart';
+import 'package:opero/feature/auth/blocs/sign_in/sign_in_bloc.dart';
 import 'package:opero/feature/auth/blocs/sign_up/sign_up_bloc.dart';
 import 'package:opero/feature/auth/cubits/forgot_password/forgot_password.dart';
 import 'package:opero/feature/auth/cubits/onboarding/onboarding_cubit.dart';
@@ -73,6 +74,7 @@ final GoRouter router = GoRouter(
         return MultiBlocProvider(
           providers: [
             BlocProvider.value(value: getIt<AuthenticationBloc>()),
+            BlocProvider.value(value: getIt<SignInBloc>()),
             BlocProvider.value(value: getIt<CompanyBloc>()),
           ],
           child: SelectCompanyView(),
@@ -94,7 +96,15 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.mainView,
       builder: (BuildContext context, GoRouterState state) {
-        return MainView();
+        final extra = state.extra as Map<String, dynamic>?; // extra'yı al
+        final companyId = extra?['companyId'] as String?; // companyId olarak al
+        if (companyId == null) {
+          // companyId yoksa hata veya fallback
+          return const Scaffold(
+            body: Center(child: Text("No company selected")),
+          );
+        }
+        return MainView(companyId: companyId); // MainView’e companyId geç
       },
     ),
   ],

@@ -16,10 +16,16 @@ mixin SelectCompanyMixin<T extends StatefulWidget> on State<T> {
   }
 
   void companyListener(BuildContext context, CompanyState state) {
-    if (state.status == CompanyStatus.failure && state.errorMessage != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+    if (state.action == CompanyAction.getCompanyById &&
+        state.status == CompanyStatus.success &&
+        state.selectedCompany != null) {
+      final company = state.selectedCompany!;
+      print(
+        "Selected Company Info: "
+        "ID: ${company.companyId}, "
+        "Name: ${company.name}, "
+        "InviteCode: ${company.inviteCode}",
+      );
     }
   }
 

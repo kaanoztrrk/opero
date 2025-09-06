@@ -10,6 +10,7 @@ CompanyModel _$CompanyModelFromJson(Map<String, dynamic> json) => CompanyModel(
   companyId: json['companyId'] as String,
   name: json['name'] as String,
   createdBy: json['createdBy'] as String,
+  inviteCode: json['inviteCode'] as String,
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -33,4 +34,5 @@ Map<String, dynamic> _$CompanyModelToJson(CompanyModel instance) =>
       'logoUrl': instance.logoUrl,
       'modules': instance.modules,
       'settings': instance.settings,
+      'inviteCode': instance.inviteCode,
     };

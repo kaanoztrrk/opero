@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class AppHelpers {
   /// Kullanıcının adından sadece ilk kelimeyi döndürür
   String getFirstName(String fullName) {
@@ -10,12 +12,12 @@ class AppHelpers {
     return uid.substring(uid.length - 6); // son 6 karakter
   }
 
-  String generateCompanyCode() {
+  String generateInviteCode(int length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final now = DateTime.now().millisecondsSinceEpoch;
+    final rand = Random.secure();
     return List.generate(
-      6,
-      (i) => chars[(now ~/ (i + 1)) % chars.length],
+      length,
+      (_) => chars[rand.nextInt(chars.length)],
     ).join();
   }
 }

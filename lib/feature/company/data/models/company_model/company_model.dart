@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'company_model.g.dart';
 
 @HiveType(typeId: 1)
+@JsonKey(defaultValue: '')
 @JsonSerializable(explicitToJson: true)
 class CompanyModel {
   @HiveField(0)
@@ -30,10 +31,14 @@ class CompanyModel {
   @HiveField(7)
   final Map<String, dynamic>? settings;
 
+  @HiveField(8)
+  final String inviteCode;
+
   CompanyModel({
     required this.companyId,
     required this.name,
     required this.createdBy,
+    required this.inviteCode,
     DateTime? createdAt,
     DateTime? updatedAt,
     this.logoUrl,
